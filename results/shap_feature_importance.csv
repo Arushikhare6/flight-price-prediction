@@ -1,0 +1,33 @@
+Feature,Mean |SHAP Value|
+remainder__Duration_Minutes,1855.0215
+categorical__Airline_Jet Airways,1147.7588
+remainder__Journey_Day,642.83417
+remainder__Journey_Month,625.0622
+remainder__Total_Stops,557.9932
+categorical__Airline_Multiple carriers,241.9045
+remainder__Journey_Weekday,180.05333
+categorical__Airline_IndiGo,170.26416
+remainder__Arrival_Hour,158.86436
+remainder__Departure_Minute,131.12411
+remainder__Departure_Hour,112.74008
+categorical__Airline_Air India,111.94039
+remainder__Arrival_Minute,93.985245
+categorical__Source_Banglore,93.95244
+categorical__Destination_New Delhi,89.41665
+categorical__Airline_SpiceJet,78.3168
+categorical__Airline_Vistara,65.8092
+categorical__Source_Delhi,59.604652
+categorical__Source_Mumbai,52.71895
+categorical__Source_Kolkata,32.48536
+categorical__Airline_Air Asia,30.532436
+categorical__Airline_Jet Airways Business,27.712702
+categorical__Airline_GoAir,23.424534
+categorical__Destination_Delhi,9.494716
+categorical__Destination_Hyderabad,8.138222
+categorical__Destination_Cochin,7.272012
+categorical__Destination_Banglore,4.4364467
+categorical__Source_Chennai,3.3169835
+categorical__Airline_Multiple carriers Premium economy,2.9993234
+categorical__Destination_Kolkata,1.5892268
+categorical__Airline_Trujet,0.29531223
+categorical__Airline_Vistara Premium economy,0.09362664
