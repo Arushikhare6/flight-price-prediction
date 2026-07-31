@@ -31,7 +31,6 @@ Predicting airline ticket prices using machine learning regression modeling, hyp
 - [Results](#results)
 - [Future Improvements](#future-improvements)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
 
@@ -167,6 +166,7 @@ flight-price-prediction/
 │
 ├── requirements.txt
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
@@ -200,17 +200,6 @@ streamlit run app/app.py
 
 **Or visit the live deployed version:**  
 👉 [https://skyprice-predictor.streamlit.app/](https://skyprice-predictor.streamlit.app/)
-
-**Reproduce the machine learning pipeline from scratch (optional):**
-
-1. Generate data splits:
-   ```bash
-   python src/data_split.py
-   ```
-2. Run notebooks `01` through `07` sequentially in Jupyter Notebook / JupyterLab:
-   ```bash
-   jupyter notebook notebooks/
-   ```
 
 ---
 
@@ -252,11 +241,11 @@ Evaluated strictly on the validation set (`val.csv`):
 
 ### Final Production Model Evaluation (Unbiased Test Set `test.csv`)
 
-The final tuned **Random Forest Regressor** model was selected for production deployment after hyperparameter optimization on `R2 Score`. Evaluated once against the held-out test set (`test.csv`):
+The final tuned **XGBoost Regressor** model was selected for production deployment after hyperparameter optimization on `R2 Score`. Evaluated once against the held-out test set (`test.csv`):
 
-- **Final Test R² Score**: **`0.8151`** (explains ~81.5% of ticket price variance)
-- **Mean Absolute Error (MAE)**: **`₹1,169.24`**
-- **Root Mean Squared Error (RMSE)**: **`₹2,015.51`**
+- **Final Test R² Score**: **`0.8226`** (explains ~82.3% of ticket price variance)
+- **Mean Absolute Error (MAE)**: **`₹1,222.81`**
+- **Root Mean Squared Error (RMSE)**: **`₹1,974.46`**
 
 SHAP TreeExplainer analysis confirmed that **Duration**, **Total Layover Stops**, **Airline Carrier**, and **Departure Month** are the strongest drivers of ticket pricing.
 

@@ -118,8 +118,8 @@ with st.sidebar:
     st.markdown(f"""
     - **Algorithm:** {active_model_name}
     - **Dataset:** 10,680+ Flight Records
-    - **Final Test R² Accuracy:** `0.815` (81.5%)
-    - **Final Test MAE:** `₹1,169`
+    - **Final Test R² Accuracy:** `0.823` (82.3%)
+    - **Final Test MAE:** `₹1,223`
     - **Explainability:** SHAP TreeExplainer
     """)
     
