@@ -2,20 +2,23 @@
 
 Predicting airline ticket prices using machine learning regression modeling, hyperparameter tuning, and SHAP-based AI explainability, served through an interactive Streamlit application.
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://skyprice-predictor.streamlit.app/)
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikitlearn)
 ![XGBoost](https://img.shields.io/badge/XGBoost-Regression-green)
 ![LightGBM](https://img.shields.io/badge/LightGBM-Regression-yellow)
 ![CatBoost](https://img.shields.io/badge/CatBoost-Regression-lightgrey)
 ![SHAP](https://img.shields.io/badge/SHAP-Explainability-purple)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit)
 ![License](https://img.shields.io/badge/License-MIT-blue)
+
+🚀 **Live Interactive App**: [https://skyprice-predictor.streamlit.app/](https://skyprice-predictor.streamlit.app/)
 
 ---
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
+- [Live Demo](#live-demo)
 - [Features](#features)
 - [Dataset](#dataset)
 - [Tech Stack](#tech-stack)
@@ -49,8 +52,16 @@ This project builds a complete regression pipeline that predicts flight ticket p
 
 ---
 
+## Live Demo
+
+Access the live, interactive Streamlit application here:  
+👉 **[https://skyprice-predictor.streamlit.app/](https://skyprice-predictor.streamlit.app/)**
+
+---
+
 ## Features
 
+- **Live Web Application**: Served publicly on Streamlit Community Cloud.
 - **End-to-End Pipeline**: From raw data cleaning to feature engineering, baseline selection, hyperparameter tuning, and a live Streamlit app.
 - **Leakage-Safe Architecture**: Partitioned explicit `train.csv` (70%), `val.csv` (15%), and `test.csv` (15%) dataset splits to prevent data leakage during preprocessing and tuning.
 - **Model-Specific Preprocessing**: Model-aware preprocessing pipeline that applies `StandardScaler` for Linear Regression while leaving numeric features unscaled for tree ensembles.
@@ -181,11 +192,14 @@ pip install -r requirements.txt
 
 ## Usage
 
-**Run the web prediction app:**
+**Run the web prediction app locally:**
 
 ```bash
 streamlit run app/app.py
 ```
+
+**Or visit the live deployed version:**  
+👉 [https://skyprice-predictor.streamlit.app/](https://skyprice-predictor.streamlit.app/)
 
 **Reproduce the machine learning pipeline from scratch (optional):**
 
