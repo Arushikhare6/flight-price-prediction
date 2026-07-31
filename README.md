@@ -1,8 +1,8 @@
 # Flight Price Prediction
 
-Predicting airline ticket prices using regression modeling, hyperparameter tuning, and SHAP-based explainability, served through an interactive Streamlit application.
+Predicting airline ticket prices using machine learning regression modeling, hyperparameter tuning, and SHAP-based AI explainability, served through an interactive Streamlit application.
 
-![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikitlearn)
 ![XGBoost](https://img.shields.io/badge/XGBoost-Regression-green)
 ![LightGBM](https://img.shields.io/badge/LightGBM-Regression-yellow)
@@ -38,26 +38,26 @@ Predicting airline ticket prices using regression modeling, hyperparameter tunin
 
 Airline ticket prices fluctuate based on a combination of factors — airline, route, number of stops, journey timing, and duration — that are not transparent to the end buyer and are non-trivial to model directly.
 
-This project builds a complete regression pipeline that predicts flight ticket prices from these underlying factors, benchmarks multiple algorithms against each other, tunes the strongest candidates, and explains individual predictions using SHAP rather than treating the model as a black box.
+This project builds a complete regression pipeline that predicts flight ticket prices from these underlying factors, benchmarks multiple algorithms against each other, tunes the strongest candidates under strict data-leakage-free conditions, and explains individual predictions using SHAP rather than treating the model as a black box.
 
 **Why it matters:**
-- Buyers can get a data-driven price estimate before booking, rather than relying on guesswork or manual comparison across listings.
+- Buyers get a data-driven price estimate before booking, rather than relying on guesswork or manual comparison across listings.
 - Travel platforms can use similar pipelines to power price-alert features, fare-trend analysis, or anomaly detection on mispriced listings.
-- The explainability layer means predictions are auditable — a stakeholder can see *why* a given price was predicted, not just the number itself.
+- The explainability layer means predictions are auditable — stakeholders can see *why* a given price was predicted, not just the number itself.
 
-**Target users:** Travel-tech platforms, fare comparison tools, and data teams evaluating fare prediction as a feature; also serves as a reference implementation of a leakage-safe, explainable regression pipeline.
+**Target users:** Travel-tech platforms, fare comparison tools, and data science teams evaluating fare prediction as a feature; also serves as a reference implementation of a leakage-safe, explainable ML regression pipeline.
 
 ---
 
 ## Features
 
-- End-to-end pipeline from raw data to deployed prediction app
-- Benchmarking across 8 regression algorithms under identical, leakage-safe conditions
-- Automated hyperparameter tuning via `RandomizedSearchCV` on top-performing candidates
-- Model explainability with SHAP (global feature importance and per-prediction breakdowns)
-- Modular, production-style codebase (`src/`) shared across notebooks and the deployed app
-- Interactive Streamlit application for live, explainable predictions
-- Reproducible environment via a pinned `requirements.txt`
+- **End-to-End Pipeline**: From raw data cleaning to feature engineering, baseline selection, hyperparameter tuning, and a live Streamlit app.
+- **Leakage-Safe Architecture**: Partitioned explicit `train.csv` (70%), `val.csv` (15%), and `test.csv` (15%) dataset splits to prevent data leakage during preprocessing and tuning.
+- **Model-Specific Preprocessing**: Model-aware preprocessing pipeline that applies `StandardScaler` for Linear Regression while leaving numeric features unscaled for tree ensembles.
+- **Benchmarking**: Evaluation across 8 regression algorithms under identical validation conditions.
+- **Automated Hyperparameter Tuning**: `RandomizedSearchCV` cross-validation on top-performing candidates.
+- **Model Explainability**: SHAP (SHapley Additive exPlanations) for global feature importance and per-prediction waterfall breakdowns.
+- **Interactive Streamlit App**: Instant price estimates and feature breakdown visualizations.
 
 ---
 
@@ -66,18 +66,17 @@ This project builds a complete regression pipeline that predicts flight ticket p
 | Attribute | Details |
 |---|---|
 | **Source** | Kaggle — Flight Price Prediction dataset |
-| **Size** | ~10,000+ flight records |
-| **Target Variable** | `Price` (ticket price) |
-| **Key Features** | Airline, Source, Destination, Route, Date of Journey, Departure Time, Arrival Time, Duration, Total Stops, Additional Info |
+| **Size** | ~10,680+ flight records |
+| **Target Variable** | `Price` (ticket price in ₹) |
+| **Key Features** | Airline, Source, Destination, Route, Date of Journey, Departure Time, Arrival Time, Duration, Total Stops |
 
 **Preprocessing performed:**
-- Parsed `Date_of_Journey` into `Journey_Day`, `Journey_Month`, and `Journey_Weekday`
-- Converted departure/arrival timestamps into separate hour and minute features
-- Converted flight duration from string format (e.g., `2h 50m`) into total minutes
-- Converted `Total_Stops` from text categories (e.g., `non-stop`, `1 stop`) into ordinal integers
-- Dropped low-information columns (`Additional_Info`, `Route`) after evaluation
-- Removed missing values and duplicate records
-- Encoded categorical variables (`Airline`, `Source`, `Destination`) using One-Hot Encoding within a `ColumnTransformer`, wrapped in a `Pipeline` to prevent train/test data leakage
+- Extracted `Journey_Day`, `Journey_Month`, and `Journey_Weekday` from `Date_of_Journey`.
+- Converted departure and arrival timestamps into separate hour and minute features.
+- Standardized flight duration strings (e.g., `2h 50m`) into total minutes (`Duration_Minutes`).
+- Mapped `Total_Stops` text categories (e.g., `non-stop`, `1 stop`) into ordinal integers.
+- Removed missing values and duplicate records.
+- Encoded categorical variables (`Airline`, `Source`, `Destination`) using `OneHotEncoder` inside a scikit-learn `Pipeline`.
 
 ---
 
@@ -85,12 +84,12 @@ This project builds a complete regression pipeline that predicts flight ticket p
 
 | Category | Tools |
 |---|---|
-| **Programming Language** | Python |
+| **Programming Language** | Python 3.11 |
 | **Libraries** | Pandas, NumPy, Scikit-learn, Joblib |
 | **Machine Learning Models** | Linear Regression, Decision Tree, Random Forest, Gradient Boosting, Extra Trees, XGBoost, LightGBM, CatBoost |
 | **Explainability** | SHAP |
-| **Visualization** | Matplotlib, Plotly |
-| **Deployment** | Streamlit |
+| **Visualization** | Matplotlib, Seaborn |
+| **Deployment** | Streamlit, Streamlit Community Cloud |
 | **Version Control** | Git, GitHub |
 
 ---
@@ -100,16 +99,14 @@ This project builds a complete regression pipeline that predicts flight ticket p
 <details>
 <summary><strong>Click to expand full pipeline description</strong></summary>
 
-1. **Data Collection** — Raw flight data sourced from Kaggle, stored under `data/raw/`.
-2. **Data Cleaning** — Missing values, duplicates, and invalid duration entries handled and validated.
-3. **Exploratory Data Analysis (EDA)** — Price distributions analyzed against airline, source, destination, stops, and duration to identify key drivers.
-4. **Feature Engineering** — Date and time fields decomposed into model-friendly numeric features; duration standardized to minutes.
-5. **Preprocessing** — Categorical features encoded via `OneHotEncoder` inside a `ColumnTransformer`; entire preprocessing step wrapped in a `Pipeline` alongside each model to guarantee identical, leakage-free treatment of train and test data.
-6. **Model Training** — Eight regression algorithms trained under identical pipeline conditions for a fair, apples-to-apples comparison.
-7. **Hyperparameter Tuning** — Top three baseline performers tuned via `RandomizedSearchCV` with cross-validation.
-8. **Evaluation** — Models compared using MAE, RMSE, and R² Score; tuned results validated against baseline before being accepted as final.
-9. **Model Saving** — Best-performing pipeline serialized with `joblib` for reuse without retraining.
-10. **Prediction / Explainability** — Final model deployed in a Streamlit app; each prediction is accompanied by a SHAP waterfall plot showing which features increased or decreased the predicted price.
+1. **Data Collection** — Raw flight data stored under `data/raw/`.
+2. **Data Cleaning & Feature Engineering** — Text fields decomposed into numeric date/time features; duration converted to total minutes (`data/processed/featured_train.csv`).
+3. **Data Splitting (`src/data_split.py`)** — Explicit 70% Train, 15% Validation, and 15% Test partitioning (`data/processed/split/`) to guarantee zero test-set data leakage.
+4. **Model-Specific Preprocessing (`src/preprocessing.py`)** — Categorical features one-hot encoded inside a `ColumnTransformer`; `StandardScaler` applied only for Linear Regression.
+5. **Baseline Benchmarking (`05_Preprocessing_and_Baseline_Modeling.ipynb`)** — Eight regression algorithms trained on `train.csv` and evaluated against `val.csv`.
+6. **Hyperparameter Tuning (`06_Hyperparameter_Tuning.ipynb`)** — Top baseline performers tuned via `RandomizedSearchCV` with 3-fold cross-validation on `train.csv` and scored on `val.csv`.
+7. **Final Unbiased Test Evaluation (`07_SHAP_Explainability.ipynb`)** — One-time evaluation of the serialized tuned model on the held-out `test.csv`.
+8. **Explainability & App Serving (`app/app.py`)** — Serialized pipeline served via interactive Streamlit app with live SHAP waterfall plots.
 
 </details>
 
@@ -121,40 +118,41 @@ This project builds a complete regression pipeline that predicts flight ticket p
 flight-price-prediction/
 │
 ├── app/
-│   └── app.py                     # Streamlit prediction app
+│   └── app.py                     # Streamlit web application
 │
 ├── data/
-│   ├── raw/                       # Original dataset
-│   └── processed/                 # Cleaned and feature-engineered dataset
+│   ├── raw/                       # Original raw dataset
+│   └── processed/                 # Feature-engineered dataset & split subsets
+│       └── split/                 # Fixed train.csv (70%), val.csv (15%), test.csv (15%)
 │
 ├── notebooks/
 │   ├── 01_Data_Understanding.ipynb
 │   ├── 02_EDA.ipynb
 │   ├── 03_Data_Cleaning.ipynb
 │   ├── 04_Feature_Engineering.ipynb
-│   ├── 05_Preprocessing_and_Model_Building.ipynb
+│   ├── 05_Preprocessing_and_Baseline_Modeling.ipynb
 │   ├── 06_Hyperparameter_Tuning.ipynb
 │   └── 07_SHAP_Explainability.ipynb
 │
 ├── src/
-│   ├── preprocessing.py            # Preprocessing pipeline (ColumnTransformer)
-│   ├── model_factory.py            # Candidate model definitions
-│   ├── evaluation.py               # Regression evaluation metrics
-│   └── tuning.py                   # Hyperparameter search spaces
+│   ├── __init__.py                # Package initializer
+│   ├── data_split.py               # Train/val/test data partitioner
+│   ├── preprocessing.py            # Model-aware ColumnTransformer pipeline
+│   ├── model_factory.py            # Candidate regression model definitions
+│   ├── evaluation.py               # MAE, RMSE, R² metrics
+│   ├── tuning.py                   # Hyperparameter search grids
+│   └── utils.py                    # Pipeline IO and formatting helpers
 │
 ├── models/
-│   ├── best_baseline_model.pkl
-│   └── final_tuned_model.pkl
+│   ├── best_baseline_model.pkl    # Serialized best baseline model
+│   └── final_tuned_model.pkl      # Serialized final production model
 │
 ├── results/
-│   ├── baseline_results.csv
-│   ├── tuned_results.csv
-│   └── shap_feature_importance.csv
+│   ├── baseline_results.csv       # Validation baseline rankings
+│   └── tuned_results.csv          # Hyperparameter tuning results
 │
 ├── screenshots/
-│   ├── baseline_r2_comparison.png
-│   ├── shap_summary_plot.png
-│   └── shap_waterfall_single_prediction.png
+│   └── shap_summary_plot.png      # Global SHAP feature importances
 │
 ├── requirements.txt
 ├── .gitignore
@@ -183,106 +181,87 @@ pip install -r requirements.txt
 
 ## Usage
 
-**Run the notebooks (optional — to reproduce training from scratch):**
-
-```bash
-jupyter notebook notebooks/
-```
-
-Run notebooks `01` through `07` in sequence to reproduce data preparation, model training, tuning, and explainability outputs.
-
-**Run the prediction app:**
+**Run the web prediction app:**
 
 ```bash
 streamlit run app/app.py
 ```
 
-> If `models/final_tuned_model.pkl` is not present, regenerate it by running `notebooks/05_Preprocessing_and_Model_Building.ipynb` and `notebooks/06_Hyperparameter_Tuning.ipynb` in order.
+**Reproduce the machine learning pipeline from scratch (optional):**
+
+1. Generate data splits:
+   ```bash
+   python src/data_split.py
+   ```
+2. Run notebooks `01` through `07` sequentially in Jupyter Notebook / JupyterLab:
+   ```bash
+   jupyter notebook notebooks/
+   ```
 
 ---
 
 ## Models Used
 
-| Model | Purpose | Advantages |
+| Model | Category | Characteristics |
 |---|---|---|
-| Linear Regression | Baseline benchmark | Simple, interpretable, fast to train |
-| Decision Tree | Non-linear baseline | Captures non-linear relationships, easy to visualize |
-| Random Forest | Ensemble baseline | Reduces overfitting via bagging, handles non-linearity well |
-| Gradient Boosting | Sequential ensemble | Corrects prior errors iteratively, strong predictive power |
-| Extra Trees | Randomized ensemble | Faster training than Random Forest, reduces variance |
-| XGBoost | Gradient boosting (optimized) | Regularization, high performance, efficient on tabular data |
-| LightGBM | Gradient boosting (leaf-wise) | Faster training on large datasets, memory efficient |
-| CatBoost | Gradient boosting (categorical-aware) | Native categorical feature handling, resistant to overfitting |
+| **Linear Regression** | Parametric Baseline | Simple, fast, linear baseline (uses `StandardScaler`) |
+| **Decision Tree** | Tree Baseline | Non-linear relationships, intuitive decision logic |
+| **Random Forest** | Bagging Ensemble | Reduces variance via bootstrap aggregation |
+| **Gradient Boosting** | Boosting Ensemble | Sequential error correction via gradient boosting |
+| **Extra Trees** | Extremely Randomized Trees | Random split points for variance reduction |
+| **XGBoost** | Optimized Boosting | High performance, regularized gradient boosting |
+| **LightGBM** | Leaf-Wise Boosting | Fast, memory-efficient histogram-based boosting |
+| **CatBoost** | Categorical Boosting | Native symmetric tree boosting |
 
 ---
 
 ## Model Evaluation
 
-Baseline and tuned models were evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and R² Score.
+### Baseline Validation Performance (`results/baseline_results.csv`)
 
-| Model | MAE (₹) | RMSE (₹) | R² Score |
+Evaluated strictly on the validation set (`val.csv`):
+
+| Model | MAE (₹) | RMSE (₹) | Validation R² Score |
 |---|---|---|---|
-| **XGBoost (Tuned)** | 1171.42 | 1819.60 | **0.8412** |
-| Random Forest (Tuned) | 1129.60 | 1873.92 | 0.8316 |
-| LightGBM (Tuned) | 1162.70 | 1926.26 | 0.8220 |
-| Decision Tree | *[placeholder]* | *[placeholder]* | *[placeholder]* |
-| Gradient Boosting | *[placeholder]* | *[placeholder]* | *[placeholder]* |
-| Extra Trees | *[placeholder]* | *[placeholder]* | *[placeholder]* |
-| CatBoost | *[placeholder]* | *[placeholder]* | *[placeholder]* |
-| Linear Regression | *[placeholder]* | *[placeholder]* | *[placeholder]* |
+| **XGBoost** | 1,270.78 | 2,232.74 | **0.7656** |
+| **LightGBM** | 1,284.07 | 2,271.65 | **0.7574** |
+| **Random Forest** | 1,275.72 | 2,292.52 | **0.7529** |
+| **CatBoost** | 1,412.69 | 2,358.70 | 0.7384 |
+| **Extra Trees** | 1,331.30 | 2,573.82 | 0.6885 |
+| **Gradient Boosting** | 1,564.82 | 2,575.05 | 0.6882 |
+| **Decision Tree** | 1,485.80 | 2,748.60 | 0.6448 |
+| **Linear Regression (Scaled)** | 1,994.11 | 3,088.01 | 0.5516 |
 
 ---
 
 ## Results
 
-The final tuned **XGBoost** model was selected as the production model, achieving an R² Score of **0.8412** on the held-out test set — explaining approximately 84% of the variance in flight ticket prices, with an average prediction error (MAE) of approximately ₹1,171.
+### Final Production Model Evaluation (Unbiased Test Set `test.csv`)
 
-SHAP analysis was used to validate that the model's predictions align with domain intuition (e.g., number of stops and airline choice are meaningful price drivers), rather than relying on spurious correlations. Full feature-level importance is available in `results/shap_feature_importance.csv`.
+The final tuned **Random Forest Regressor** model was selected for production deployment after hyperparameter optimization on `R2 Score`. Evaluated once against the held-out test set (`test.csv`):
+
+- **Final Test R² Score**: **`0.8151`** (explains ~81.5% of ticket price variance)
+- **Mean Absolute Error (MAE)**: **`₹1,169.24`**
+- **Root Mean Squared Error (RMSE)**: **`₹2,015.51`**
+
+SHAP TreeExplainer analysis confirmed that **Duration**, **Total Layover Stops**, **Airline Carrier**, and **Departure Month** are the strongest drivers of ticket pricing.
 
 ---
 
 ## Future Improvements
 
-- Graceful handling of unseen airlines or routes at inference time
-- Scheduled retraining pipeline to incorporate new flight data
-- Incorporation of seasonal and holiday demand signals for dynamic pricing awareness
-- Confidence intervals or prediction ranges alongside point estimates
-- CI/CD pipeline for automated testing and deployment
-- Model monitoring for prediction drift in production
+- **GPS Distance Features**: Calculate flight distance in kilometers from airport coordinates to enable predictions on new routes.
+- **Dynamic Demand Features**: Incorporate holiday and seasonal travel indicators.
+- **Unseen Category Handling**: Target encoding or frequency encoding for expansion to smaller regional airports.
+- **CI/CD Integration**: Automated pipeline testing and Streamlit deployment workflows.
 
 ---
 
 ## Screenshots
 
-**Model Comparison**
-
-`[Insert screenshot: screenshots/baseline_r2_comparison.png]`
-
 **SHAP Global Feature Importance**
 
-`[Insert screenshot: screenshots/shap_summary_plot.png]`
-
-**SHAP Single Prediction Explanation**
-
-`[Insert screenshot: screenshots/shap_waterfall_single_prediction.png]`
-
-**Streamlit Application**
-
-`[Insert screenshot: app interface and sample prediction]`
-
----
-
-## Contributing
-
-Contributions are welcome. To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature-name`)
-3. Commit your changes with clear, descriptive messages
-4. Push to your branch and open a Pull Request
-5. Ensure code follows existing style conventions and includes relevant documentation updates
-
-For major changes, please open an issue first to discuss what you would like to change.
+![SHAP Global Summary](screenshots/shap_summary_plot.png)
 
 ---
 
@@ -294,7 +273,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Author
 
-**Name:** Arushi Khare
-**GitHub:** [@Arushikhare6](https://github.com/Arushikhare6)
-**LinkedIn:** *[placeholder]*
-**Email:** *[placeholder]*
+**Name:** Arushi Khare  
+**GitHub:** [@Arushikhare6](https://github.com/Arushikhare6)  
