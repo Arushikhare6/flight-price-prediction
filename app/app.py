@@ -15,13 +15,26 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Load Model (cached) ──────────────────────────────────
+# ── Load Model (cached with fail-safe path resolution) ──
 @st.cache_resource
 def load_model():
-    model_path = Path("models") / "final_tuned_model.pkl"
-    if not model_path.exists():
-        model_path = Path("../models") / "final_tuned_model.pkl"
-    return joblib.load(model_path)
+    app_dir = Path(__file__).resolve().parent
+    repo_root = app_dir.parent
+
+    possible_paths = [
+        repo_root / "models" / "final_tuned_model.pkl",
+        app_dir / "models" / "final_tuned_model.pkl",
+        Path("models") / "final_tuned_model.pkl",
+        Path("../models") / "final_tuned_model.pkl",
+    ]
+
+    for model_path in possible_paths:
+        if model_path.exists():
+            return joblib.load(model_path)
+
+    raise FileNotFoundError(
+        f"Could not locate 'final_tuned_model.pkl' in any of the expected paths: {possible_paths}"
+    )
 
 
 # ── Load SHAP Explainer (cached) ──────────────────────────
